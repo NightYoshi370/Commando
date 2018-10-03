@@ -31,8 +31,7 @@ module.exports = class HelpCommand extends Command {
 	async run(msg, args) { // eslint-disable-line complexity
 		const groups = this.client.registry.groups;
 		const commands = this.client.registry.findCommands(args.command, false, msg);
-		const showAll = args.command && args.command.toLowerCase() === 'all';
-		if(args.command && !showAll) {
+		if(args.command) {
 			if(commands.length === 1) {
 				let help = stripIndents`
 					${oneLine`
@@ -74,25 +73,18 @@ module.exports = class HelpCommand extends Command {
 			const messages = [];
 			try {
 				messages.push(await msg.direct(stripIndents`
-					${oneLine`
-						To run a command in ${msg.guild ? msg.guild.name : 'any server'},
-						use ${Command.usage('command', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.
-						For example, ${Command.usage('prefix', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.
-					`}
-					To run a command in this DM, simply use ${Command.usage('command', null, null)} with no prefix.
+					Help for **CourseBot**
 
 					Use ${this.usage('<command>', null, null)} to view detailed information about a specific command.
-					Use ${this.usage('all', null, null)} to view a list of *all* commands, not just available ones.
 
-					__**${showAll ? 'All commands' : `Available commands in ${msg.guild || 'this DM'}`}**__
+					__**Available commands in ${msg.guild || 'this DM'}**__
 
-					${groups.filter(grp => grp.commands.some(cmd => !cmd.hidden && (showAll || cmd.isUsable(msg))))
+					${groups.filter(grp => grp.commands.some(cmd => !cmd.hidden && cmd.isUsable(msg)))
 						.map(grp => stripIndents`
-							__${grp.name}__
-							${grp.commands.filter(cmd => !cmd.hidden && (showAll || cmd.isUsable(msg)))
+							${grp.commands.filter(cmd => !cmd.hidden && cmd.isUsable(msg))
 								.map(cmd => `**${cmd.name}:** ${cmd.description}${cmd.nsfw ? ' (NSFW)' : ''}`).join('\n')
 							}
-						`).join('\n\n')
+						`).join('\n')
 					}
 				`, { split: true }));
 				if(msg.channel.type !== 'dm') messages.push(await msg.reply('Sent you a DM with information.'));

@@ -1,5 +1,6 @@
 const { oneLine } = require('common-tags');
 const Command = require('../base');
+const { RichEmbed } = require('discord.js');
 
 module.exports = class PingCommand extends Command {
 	constructor(client) {
@@ -18,17 +19,20 @@ module.exports = class PingCommand extends Command {
 	async run(msg) {
 		if(!msg.editable) {
 			const pingMsg = await msg.reply('Pinging...');
-			return pingMsg.edit(oneLine`
-				${msg.channel.type !== 'dm' ? `${msg.author},` : ''}
-				Pong! The message round-trip took ${pingMsg.createdTimestamp - msg.createdTimestamp}ms.
-				${this.client.ping ? `The heartbeat ping is ${Math.round(this.client.ping)}ms.` : ''}
-			`);
+
+			var embed = new RichEmbed()
+				.setTitle("Pong! :stopwatch:")
+				.setDescription(`**Message round-trip:** ${pingMsg.createdTimestamp - msg.createdTimestamp}ms \n ${this.client.ping ? `**Heartbeat ping:** ${Math.round(this.client.ping)}ms.` : ''}`)
+				.setFooter("Coursebot - by NightYoshi370 & Samplasion");
+			return pingMsg.edit(embed);
 		} else {
 			await msg.edit('Pinging...');
-			return msg.edit(oneLine`
-				Pong! The message round-trip took ${msg.editedTimestamp - msg.createdTimestamp}ms.
-				${this.client.ping ? `The heartbeat ping is ${Math.round(this.client.ping)}ms.` : ''}
-			`);
+
+			var embed = new RichEmbed()
+				.setTitle("Pong! :stopwatch:")
+				.setDescription(`**Message round-trip:** ${msg.editedTimestamp - msg.createdTimestamp}ms \n ${this.client.ping ? `**Heartbeat ping:** ${Math.round(this.client.ping)}ms.` : ''}`)
+				.setFooter("Coursebot - by NightYoshi370 & Samplasion");
+			return msg.edit(embed);
 		}
 	}
 };
