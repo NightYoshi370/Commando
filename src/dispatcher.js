@@ -1,4 +1,4 @@
-const escapeRegex = require('escape-string-regexp');
+const { escapeRegex } = require('./util');
 
 /** Handles parsing messages and running commands from them */
 class CommandDispatcher {
@@ -236,7 +236,7 @@ class CommandDispatcher {
 		const prefix = message.guild ? message.guild.commandPrefix : this.client.commandPrefix;
 		if(!this._commandPatterns[prefix]) this.buildCommandPattern(prefix);
 		let cmdMsg = this.matchDefault(message, this._commandPatterns[prefix], 2);
-		if(!cmdMsg && !message.guild) cmdMsg = this.matchDefault(message, /^([^\s]+)/i);
+		// if(!cmdMsg && !message.guild) cmdMsg = this.matchDefault(message, /^([^\s]+)/i);
 		return cmdMsg;
 	}
 
